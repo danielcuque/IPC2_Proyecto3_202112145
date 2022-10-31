@@ -3,18 +3,8 @@ from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 from xml.dom.minidom import Element, parse
 
-from helpers.utils import allowed_file
-
 
 app = Flask(__name__)
-
-path = os.getcwd()
-UPLOAD_FOLDER = os.path.join(path, 'uploads')
-
-if not os.path.isdir(UPLOAD_FOLDER):
-    os.mkdir(UPLOAD_FOLDER)
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 @app.route('/')
@@ -52,9 +42,9 @@ def crearConfiguracion():
         data = request.files.getlist('')
         for file in data:
             if file and allowed_file(file.filename):
-                print(file.stream.read())
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                information: str = file.stream.read().decode('utf-8')
+                file.close()
+                print(type(information))
 
     return 'ok', 200
 
