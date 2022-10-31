@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
+from xml.dom.minidom import Element, parse
 
 from helpers.utils import allowed_file
 
@@ -51,6 +52,7 @@ def crearConfiguracion():
         data = request.files.getlist('')
         for file in data:
             if file and allowed_file(file.filename):
+                print(file.stream.read())
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
