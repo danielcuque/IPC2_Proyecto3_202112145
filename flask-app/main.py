@@ -1,8 +1,7 @@
-import os
 from flask import Flask, jsonify, request
-from werkzeug.utils import secure_filename
-from xml.dom.minidom import Element, parse
 
+
+from helpers.utils import allowed_file, read_info
 
 app = Flask(__name__)
 
@@ -42,10 +41,7 @@ def crearConfiguracion():
         data = request.files.getlist('')
         for file in data:
             if file and allowed_file(file.filename):
-                information: str = file.stream.read().decode('utf-8')
-                file.close()
-                print(type(information))
-
+                read_info(file)
     return 'ok', 200
 
 
