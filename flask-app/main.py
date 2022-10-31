@@ -38,11 +38,19 @@ def crearCategoria():
 @app.route('/crearConfiguracion', methods=['POST'])
 def crearConfiguracion():
     if request.method == 'POST':
+        clients_created: int = 0
+        resources_created: int = 0
+        categories_created: int = 0
+
         data = request.files.getlist('')
         for file in data:
             if file and allowed_file(file.filename):
-                read_info(file)
-    return 'ok', 200
+                quantities: int = read_info(file)
+                clients_created += quantities[0]
+                resources_created += quantities[1]
+                categories_created += quantities[2]
+        return jsonify({'clientes': clients_created, 'recursos': resources_created, 'categorias': categories_created}), 201
+    return jsonify({'msg': 'No se pudo crear la configuración'}), 400
 
 
 @app.route('/crearCliente', methods=['POST'])

@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <store>
-    <configuraciones></configuraciones>
+    <configuraciones>
+        
+    </configuraciones>
     <listaClientes></listaClientes>
     <listaRecursos></listaRecursos>
     <listaCategorias></listaCategorias>

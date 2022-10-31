@@ -11,7 +11,7 @@ def allowed_file(filename: str) -> bool:
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def read_info(file: FileStorage) -> str:
+def read_info(file: FileStorage) -> List[int]:
     information_file: str = file.stream.read().decode('utf-8')
     config_info: Element = parseString(information_file)
 
@@ -27,16 +27,18 @@ def read_info(file: FileStorage) -> str:
     categories_created: int = create_elements(
         categories_list, store, 'listaCategorias')
 
-    return f'Se crearon {clients_created} clientes, {resources_created} recursos, y {categories_created} categorias'
+    return [clients_created, resources_created, categories_created]
 
 
 def create_elements(elements: List[Element], store: Element, name_list: str) -> int:
     count: int = 0
-    list_to_insert: NodeList = store.getElementsByTagName(name_list)
-    print(list_to_insert)
+    list_to_insert: Element = store.getElementsByTagName(name_list)[0]
     for element in elements:
         count += 1
-        list_to_insert.append(element)
+        list_to_insert.appendChild(element)
 
-    store.writexml('store.xml')
+    with open('store.xml', 'w') as file:
+        # store.writexml(file)
+        '''Decomment this line and comment the previous one to see the result in the file'''
+        pass
     return count
