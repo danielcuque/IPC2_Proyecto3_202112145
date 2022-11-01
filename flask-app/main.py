@@ -81,9 +81,9 @@ def crearInstancia():
     return jsonify({'nombre': request.json['nombre']}), 201
 
 
-@app.route('/crearConsumos', methods=['PUT'])
+@app.route('/crearConsumos', methods=['POST'])
 def consumos():
-    if request.method == 'PUT':
+    if request.method == 'POST':
         files = request.files.getlist('')
         if len(files) == 0:
             return jsonify({'msg': 'No se encontraron archivos'}), 400

@@ -5,4 +5,5 @@
     <listaCategorias></listaCategorias>
     <listaConfiguraciones></listaConfiguraciones>
     <listaInstancias></listaInstancias>
+    <listaConsumos></listaConsumos>
 </store>

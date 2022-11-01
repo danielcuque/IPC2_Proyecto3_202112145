@@ -20,11 +20,22 @@ def create_clients(clients: List[Element], store: Element) -> List[int]:
 
     # Get the lists of clients and instances for the store
     list_to_insert: Element = store.getElementsByTagName('listaClientes')[0]
+    instances_list: Element = store.getElementsByTagName('listaInstancias')[0]
 
     # Iterate each client
     for client in clients:
         clients_created += 1
         list_to_insert.appendChild(client)
+
+        # Get the instances of the client
+        instances: List[Element] = copy.deepcopy(
+            client.getElementsByTagName(
+                'listaInstancias')[0].getElementsByTagName('instancia'))
+
+        # Iterate each instance
+        for instance in instances:
+            instances_created += 1
+            instances_list.appendChild(instance)
 
     with open('store.xml', 'w') as file:
         store.writexml(file)
@@ -34,9 +45,21 @@ def create_clients(clients: List[Element], store: Element) -> List[int]:
 def create_elements(elements: List[Element], store: Element, name_list: str) -> int:
     count: int = 0
     list_to_insert: Element = store.getElementsByTagName(name_list)[0]
+
+    if name_list == 'listaCategorias':
+        list_of_config: Element = store.getElementsByTagName('listaConfiguraciones')[
+            0]
+
     for element in elements:
         count += 1
         list_to_insert.appendChild(element)
+
+        if name_list == 'listaCategorias':
+            configs: List[Element] = copy.deepcopy(
+                element.getElementsByTagName('listaConfiguraciones')[0].getElementsByTagName('configuracion'))
+
+            for config in configs:
+                list_of_config.appendChild(config)
     return count
 
 
