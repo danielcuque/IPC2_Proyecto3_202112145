@@ -70,6 +70,20 @@
             <tipo>Almacenamiento</tipo>
             <valorXhora>0.01</valorXhora>
         </recurso>
+        <recurso id="2022">
+            <nombre>Recurso 1</nombre>
+            <abreviatura>CPU</abreviatura>
+            <metrica>Ghz </metrica>
+            <tipo>Procesamiento</tipo>
+            <valorXhora>0.02</valorXhora>
+        </recurso>
+        <recurso id="2077">
+            <nombre>Recurso 2</nombre>
+            <abreviatura>RAM</abreviatura>
+            <metrica>GB </metrica>
+            <tipo>Almacenamiento</tipo>
+            <valorXhora>0.03</valorXhora>
+        </recurso>
     </listaRecursos>
     <listaCategorias>
         <categoria id="2000">

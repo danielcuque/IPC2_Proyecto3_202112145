@@ -1,5 +1,6 @@
-from typing import List
+import os
 import xmltodict
+from typing import List
 from xml.dom.minidom import Element, parse, parseString
 from flask import Flask, jsonify, request
 
@@ -7,6 +8,9 @@ from flask import Flask, jsonify, request
 from helpers.utils import allowed_file, read_info, create_elements
 
 app = Flask(__name__)
+
+if os.path.exists('store.xml'):
+    store: Element = parse('store.xml')
 
 
 @app.route('/')
@@ -28,9 +32,22 @@ def consultarDatos():
 
 @app.route('/crearRecurso', methods=['POST'])
 def crearRecurso():
-    if not request.json or not 'nombre' in request.json:
-        pass
-    return jsonify({'nombre': request.json['nombre']}), 201
+    if request.method == 'POST':
+        new_resource: str = request.data.decode('utf-8')
+        new_resource: Element = parseString(new_resource)
+        new_resource: Element = new_resource.getElementsByTagName('listaRecursos')
+        if new_resource is None:
+            return jsonify({'msg': 'El recurso no es válido'}), 400
+
+        new_resource: List[Element] = new_resource[0].getElementsByTagName('recurso')
+        print(new_resource)
+        quantity: int = create_elements(new_resource, store, 'listaRecursos')
+        with open('store.xml', 'w') as file:
+            store.writexml(file)
+
+        return jsonify({'msg': f'{quantity} recursos creados'}), 200
+    else:
+        return jsonify({"msg": "Método no permitido"}), 405
 
 
 @app.route('/crearCategoria', methods=['POST'])
@@ -93,7 +110,6 @@ def consumos():
             if file and allowed_file(file.filename):
                 information_file: str = file.stream.read().decode('utf-8')
                 config_info: Element = parseString(information_file)
-                store: Element = parse('store.xml')
                 petition_list: List[Element] = config_info.getElementsByTagName(
                     'listadoConsumos')[0].getElementsByTagName('consumo')
                 petitions += create_elements(petition_list,
