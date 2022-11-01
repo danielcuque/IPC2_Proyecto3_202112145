@@ -41,15 +41,24 @@ def crearConfiguracion():
         clients_created: int = 0
         resources_created: int = 0
         categories_created: int = 0
+        instances_created: int = 0
 
         data = request.files.getlist('')
         for file in data:
             if file and allowed_file(file.filename):
                 quantities: int = read_info(file)
-                clients_created += quantities[0]
-                resources_created += quantities[1]
-                categories_created += quantities[2]
-        return jsonify({'clientes': clients_created, 'recursos': resources_created, 'categorias': categories_created}), 201
+                resources_created += quantities[0]
+                categories_created += quantities[1]
+                clients_created += quantities[2]
+                instances_created += quantities[3]
+
+        return jsonify({
+            'Clientes creados': clients_created,
+            'Recursos creados': resources_created,
+            'Categorias creadas': categories_created,
+            'Instancias creadas': instances_created
+        })
+
     return jsonify({'msg': 'No se pudo crear la configuración'}), 400
 
 
