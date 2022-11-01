@@ -1,7 +1,10 @@
+from typing import List
+from venv import create
+from xml.dom.minidom import Element, parse, parseString
 from flask import Flask, jsonify, request
 
 
-from helpers.utils import allowed_file, read_info
+from helpers.utils import allowed_file, read_info, create_elements
 
 app = Flask(__name__)
 
@@ -74,6 +77,28 @@ def crearInstancia():
     if not request.json or not 'nombre' in request.json:
         pass
     return jsonify({'nombre': request.json['nombre']}), 201
+
+
+@app.route('/crearConsumos', methods=['PUT'])
+def consumos():
+    if request.method == 'PUT':
+        files = request.files.getlist('')
+        if len(files) == 0:
+            return jsonify({'msg': 'No se encontraron archivos'}), 400
+
+        petitions: int = 0
+        for file in files:
+            if file and allowed_file(file.filename):
+                information_file: str = file.stream.read().decode('utf-8')
+                config_info: Element = parseString(information_file)
+                store: Element = parse('store.xml')
+                petition_list: List[Element] = config_info.getElementsByTagName(
+                    'listadoConsumos')[0].getElementsByTagName('consumo')
+                petitions += create_elements(petition_list,
+                                             store, 'listaConsumos')
+                with open('store.xml', 'w') as file:
+                    store.writexml(file)
+    return jsonify({'consumos': petitions})
 
 
 @app.route('/generarFactura', methods=['POST'])
