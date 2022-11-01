@@ -3,4 +3,6 @@
     <listaClientes></listaClientes>
     <listaRecursos></listaRecursos>
     <listaCategorias></listaCategorias>
+    <listaConfiguraciones></listaConfiguraciones>
+    <listaInstancias></listaInstancias>
 </store>

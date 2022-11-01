@@ -1,4 +1,5 @@
 import re
+import copy
 from werkzeug.datastructures import FileStorage
 from typing import List
 from xml.dom.minidom import Element, parse, parseString
@@ -16,11 +17,14 @@ def allowed_file(filename: str) -> bool:
 def create_clients(clients: List[Element], store: Element) -> List[int]:
     clients_created: int = 0
     instances_created: int = 0
+
+    # Get the lists of clients and instances for the store
     list_to_insert: Element = store.getElementsByTagName('listaClientes')[0]
+
+    # Iterate each client
     for client in clients:
         clients_created += 1
         list_to_insert.appendChild(client)
-        instances_created += len(client.getElementsByTagName('instancia'))
 
     with open('store.xml', 'w') as file:
         store.writexml(file)

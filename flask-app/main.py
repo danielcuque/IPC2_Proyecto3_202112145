@@ -1,5 +1,5 @@
 from typing import List
-from venv import create
+import xmltodict
 from xml.dom.minidom import Element, parse, parseString
 from flask import Flask, jsonify, request
 
@@ -21,7 +21,9 @@ def index():
 
 @app.route('/consultarDatos', methods=['GET'])
 def consultarDatos():
-    return jsonify({'datos': 'datos'})
+    with open('store.xml', 'r') as file:
+        data = xmltodict.parse(file.read())
+    return jsonify(data.get('store')), 200
 
 
 @app.route('/crearRecurso', methods=['POST'])
