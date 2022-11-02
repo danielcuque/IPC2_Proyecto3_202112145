@@ -8,7 +8,8 @@ from datetime import datetime
 
 ALLOWED_EXTENSIONS = set(['txt', 'xml', 'json'])
 
-date = re.compile(r'.*(\d{2}:\d{2})*.*(\d{2}/\d{2}/\d{4})+.*(\d{2}:\d{2})*.*')
+date = re.compile(
+    r"[a-zA-Z ;,]*(\d{2}:\d{2})*[a-zA-Z ,;]*(\d{2}/\d{2}/\d{4})+[a-zA-Z ;,]*(\d{2}:\d{2})*[a-zA-Z ;,]*")
 
 
 def allowed_file(filename: str) -> bool:
@@ -25,22 +26,59 @@ def create_clients(clients: List[Element], store: Element) -> List[int]:
 
     # Iterate each client
     for client in clients:
-        clients_created += 1
-        list_to_insert.appendChild(client)
 
         # Get the instances of the client
+        instances: List[Element] = client.getElementsByTagName(
+            'listaInstancias')[0].getElementsByTagName('instancia')
+
+        for instance in instances:
+            instance_initial_date: str = instance.getElementsByTagName('fechaInicio')[
+                0].firstChild.data
+
+            util_initial_date: str = format_date(instance_initial_date)
+            if util_initial_date != '':
+                instance.getElementsByTagName('fechaInicio')[
+                    0].firstChild.nodeValue = util_initial_date
+
+            instance_final_date = instance.getElementsByTagName(
+                'fechaFinal')
+            instance_final_date = instance_final_date[0].firstChild
+            if instance_final_date is not None:
+                util_final_date: str = format_date(instance_final_date.data)
+                if util_final_date != '':
+                    instance.getElementsByTagName('fechaFinal')[
+                        0].firstChild.nodeValue = util_final_date
+
         instances: List[Element] = copy.deepcopy(
-            client.getElementsByTagName(
-                'listaInstancias')[0].getElementsByTagName('instancia'))
+            instances)
 
         # Iterate each instance
         for instance in instances:
             instances_created += 1
             instances_list.appendChild(instance)
 
+        clients_created += 1
+        list_to_insert.appendChild(client)
+
     with open('store.xml', 'w') as file:
         store.writexml(file)
     return [clients_created, instances_created]
+
+
+def format_date(original_date: str) -> str:
+    days_format_date: str = date.match(original_date).group(2)
+    hours_format_date1: str = date.match(original_date).group(1)
+    hours_format_date2: str = date.match(original_date).group(3)
+    util_initial_date: str = ""
+    if days_format_date is not None:
+        if hours_format_date1 is not None:
+            util_initial_date = f'{days_format_date} {hours_format_date1}'
+        elif hours_format_date2 is not None:
+            util_initial_date = f'{days_format_date} {hours_format_date2}'
+        else:
+            util_initial_date = days_format_date
+
+    return util_initial_date
 
 
 def create_elements(elements: List[Element], store: Element, name_list: str) -> int:
@@ -54,6 +92,24 @@ def create_elements(elements: List[Element], store: Element, name_list: str) -> 
     for element in elements:
         count += 1
         list_to_insert.appendChild(element)
+
+        if name_list == 'listInstances':
+            instance_initial_date: str = element.getElementsByTagName('fechaInicio')[
+                0].firstChild.data
+
+            util_initial_date: str = format_date(instance_initial_date)
+            if util_initial_date != '':
+                element.getElementsByTagName('fechaInicio')[
+                    0].firstChild.nodeValue = util_initial_date
+
+            instance_final_date = element.getElementsByTagName(
+                'fechaFinal')
+            instance_final_date = instance_final_date[0].firstChild
+            if instance_final_date is not None:
+                util_final_date: str = format_date(instance_final_date.data)
+                if util_final_date != '':
+                    element.getElementsByTagName('fechaFinal')[
+                        0].firstChild.nodeValue = util_final_date
 
         if name_list == 'listaCategorias':
             configs: List[Element] = copy.deepcopy(
