@@ -21,7 +21,7 @@ def create_clients(clients: List[Element], store: Element) -> List[int]:
 
     # Get the lists of clients and instances for the store
     list_to_insert: Element = store.getElementsByTagName('listaClientes')[0]
-    instances_list: Element = store.getElementsByTagName('listaInstancias')[0]
+    instances_list: Element = store.getElementsByTagName('listInstances')[0]
 
     # Iterate each client
     for client in clients:
@@ -31,7 +31,7 @@ def create_clients(clients: List[Element], store: Element) -> List[int]:
         # Get the instances of the client
         instances: List[Element] = copy.deepcopy(
             client.getElementsByTagName(
-                'listInstances')[0].getElementsByTagName('instancia'))
+                'listaInstancias')[0].getElementsByTagName('instancia'))
 
         # Iterate each instance
         for instance in instances:
@@ -57,7 +57,7 @@ def create_elements(elements: List[Element], store: Element, name_list: str) -> 
 
         if name_list == 'listaCategorias':
             configs: List[Element] = copy.deepcopy(
-                element.getElementsByTagName('listaConfig')[0].getElementsByTagName('configuracion'))
+                element.getElementsByTagName('listaConfiguraciones')[0].getElementsByTagName('configuracion'))
 
             for config in configs:
                 list_of_config.appendChild(config)
