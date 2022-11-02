@@ -5,7 +5,7 @@ from xml.dom.minidom import Element, parse, parseString
 from flask import Flask, jsonify, request
 
 
-from helpers.utils import allowed_file, read_info, create_elements, create_clients
+from helpers.utils import allowed_file, read_info, create_elements, create_clients, cancel_instance
 
 app = Flask(__name__)
 
@@ -140,11 +140,27 @@ def crearInstancia():
         new_instance: Element = parseString(new_instance)
         new_instance: List[Element] = new_instance.getElementsByTagName(
             'instancia')
-        quantity: int = create_elements(new_instance, store, 'listaInstancias')
+        quantity: int = create_elements(new_instance, store, 'listInstances')
         with open('store.xml', 'w') as file:
             store.writexml(file)
 
         return jsonify({'msg': f'{quantity} instancias creadas'}), 200
+
+
+@app.route('/cancelInstance', methods=['POST'])
+def cancelInstance():
+    if request.method == 'POST':
+        if not request.json or not 'id' in request.json:
+            return jsonify({'msg': 'No se pudo cancelar la instancia'}), 400
+
+        id: str = request.json['id']
+        is_canceled: int = cancel_instance(id, store)
+        if is_canceled > 0:
+            return jsonify({'msg': 'Instancia cancelada'}), 200
+        else:
+            return jsonify({'msg': 'No se pudo cancelar la instancia'}), 400
+
+    return jsonify({'msg': 'No se pudo eliminar la instancia'}), 400
 
 
 @app.route('/crearConsumos', methods=['POST'])

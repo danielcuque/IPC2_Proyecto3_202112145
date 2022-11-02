@@ -3,6 +3,7 @@ import copy
 from werkzeug.datastructures import FileStorage
 from typing import List
 from xml.dom.minidom import Element, parse, parseString
+from datetime import datetime
 
 
 ALLOWED_EXTENSIONS = set(['txt', 'xml', 'json'])
@@ -30,7 +31,7 @@ def create_clients(clients: List[Element], store: Element) -> List[int]:
         # Get the instances of the client
         instances: List[Element] = copy.deepcopy(
             client.getElementsByTagName(
-                'listaInstancias')[0].getElementsByTagName('instancia'))
+                'listInstances')[0].getElementsByTagName('instancia'))
 
         # Iterate each instance
         for instance in instances:
@@ -84,3 +85,19 @@ def read_info(file: FileStorage) -> List[int]:
     instances_and_clients: List[int] = create_clients(client_list, store)
 
     return [resources_created, categories_created] + instances_and_clients
+
+
+def cancel_instance(instance_id: str, store: Element) -> int:
+    instances_list: List[Element] = store.getElementsByTagName('instancia')
+    count = 0
+
+    for instance in instances_list:
+        if instance.getAttribute('id') == instance_id:
+            instance.getElementsByTagName(
+                'estado')[0].firstChild.nodeValue = 'Cancelada'
+            instance.getElementsByTagName(
+                'fechaFinal')[0].appendChild(store.createTextNode(str(datetime.now().strftime('%d/%m/%Y %H:%M'))))
+            count += 1
+    with open('store.xml', 'w') as file:
+        store.writexml(file)
+    return count

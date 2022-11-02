@@ -4,6 +4,6 @@
     <listaRecursos></listaRecursos>
     <listaCategorias></listaCategorias>
     <listaConfig></listaConfig>
-    <listaInstancias></listaInstancias>
+    <listInstances></listInstances>
     <listaConsumos></listaConsumos>
 </store>

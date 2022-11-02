@@ -12,8 +12,8 @@
                     <idConfiguracion>201</idConfiguracion>
                     <nombre>GhostDev1</nombre>
                     <fechaInicio>10/06/2022 13:13</fechaInicio>
-                    <estado>Vigente</estado>
-                    <fechaFinal />
+                    <estado>Cancelada</estado>
+                    <fechaFinal>01/11/2022 19:33</fechaFinal>
                 </instancia>
             </listaInstancias>
         </cliente>
@@ -21,14 +21,14 @@
     <listaRecursos />
     <listaCategorias />
     <listaConfig />
-    <listaInstancias>
+    <listInstances>
         <instancia id="31">
             <idConfiguracion>201</idConfiguracion>
             <nombre>GhostDev1</nombre>
             <fechaInicio>10/06/2022 13:13</fechaInicio>
-            <estado>Vigente</estado>
-            <fechaFinal />
+            <estado>Cancelada</estado>
+            <fechaFinal>01/11/2022 19:33</fechaFinal>
         </instancia>
-    </listaInstancias>
+    </listInstances>
     <listaConsumos />
 </store>
