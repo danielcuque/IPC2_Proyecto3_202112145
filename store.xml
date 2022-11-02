@@ -1,23 +1,6 @@
 <?xml version="1.0"?>
 <store>
-    <listaClientes>
-        <cliente nit="399900">
-            <nombre>Pedri Gonzales</nombre>
-            <usuario>pedri</usuario>
-            <clave>MarmotaArbolNido</clave>
-            <direccion>10 calle 13-45 z 1</direccion>
-            <correoElectronico>jaunpems@gosth.com</correoElectronico>
-            <listaInstancias>
-                <instancia id="31">
-                    <idConfiguracion>201</idConfiguracion>
-                    <nombre>GhostDev1</nombre>
-                    <fechaInicio>10/06/2022 13:13</fechaInicio>
-                    <estado>Cancelada</estado>
-                    <fechaFinal>01/11/2022 19:33</fechaFinal>
-                </instancia>
-            </listaInstancias>
-        </cliente>
-    </listaClientes>
+    <listaClientes />
     <listaRecursos />
     <listaCategorias />
     <listaConfig />
@@ -26,8 +9,8 @@
             <idConfiguracion>201</idConfiguracion>
             <nombre>GhostDev1</nombre>
             <fechaInicio>10/06/2022 13:13</fechaInicio>
-            <estado>Cancelada</estado>
-            <fechaFinal>01/11/2022 19:33</fechaFinal>
+            <estado>Vigente</estado>
+            <fechaFinal />
         </instancia>
     </listInstances>
     <listaConsumos />
