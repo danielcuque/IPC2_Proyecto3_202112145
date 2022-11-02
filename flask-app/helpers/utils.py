@@ -47,7 +47,7 @@ def create_elements(elements: List[Element], store: Element, name_list: str) -> 
     list_to_insert: Element = store.getElementsByTagName(name_list)[0]
 
     if name_list == 'listaCategorias':
-        list_of_config: Element = store.getElementsByTagName('listaConfiguraciones')[
+        list_of_config: Element = store.getElementsByTagName('listaConfig')[
             0]
 
     for element in elements:
@@ -56,7 +56,7 @@ def create_elements(elements: List[Element], store: Element, name_list: str) -> 
 
         if name_list == 'listaCategorias':
             configs: List[Element] = copy.deepcopy(
-                element.getElementsByTagName('listaConfiguraciones')[0].getElementsByTagName('configuracion'))
+                element.getElementsByTagName('listaConfig')[0].getElementsByTagName('configuracion'))
 
             for config in configs:
                 list_of_config.appendChild(config)

@@ -3,7 +3,7 @@
     <listaClientes></listaClientes>
     <listaRecursos></listaRecursos>
     <listaCategorias></listaCategorias>
-    <listaConfiguraciones></listaConfiguraciones>
+    <listaConfig></listaConfig>
     <listaInstancias></listaInstancias>
     <listaConsumos></listaConsumos>
 </store>
