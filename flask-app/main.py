@@ -1,12 +1,16 @@
+import os
+import xmltodict
 from typing import List
-from venv import create
 from xml.dom.minidom import Element, parse, parseString
 from flask import Flask, jsonify, request
 
 
-from helpers.utils import allowed_file, read_info, create_elements
+from helpers.utils import allowed_file, read_info, create_elements, create_clients, cancel_instance
 
 app = Flask(__name__)
+
+if os.path.exists('store.xml'):
+    store: Element = parse('store.xml')
 
 
 @app.route('/')
@@ -21,21 +25,50 @@ def index():
 
 @app.route('/consultarDatos', methods=['GET'])
 def consultarDatos():
-    return jsonify({'datos': 'datos'})
+    with open('store.xml', 'r') as file:
+        data = xmltodict.parse(file.read())
+    return jsonify(data.get('store')), 200
 
 
 @app.route('/crearRecurso', methods=['POST'])
 def crearRecurso():
-    if not request.json or not 'nombre' in request.json:
-        pass
-    return jsonify({'nombre': request.json['nombre']}), 201
+    if request.method == 'POST':
+        new_resource: str = request.data.decode('utf-8')
+        new_resource: Element = parseString(new_resource)
+        new_resource: Element = new_resource.getElementsByTagName(
+            'listaRecursos')
+        if new_resource is None:
+            return jsonify({'msg': 'El recurso no es válido'}), 400
+
+        new_resource: List[Element] = new_resource[0].getElementsByTagName(
+            'recurso')
+        print(new_resource)
+        quantity: int = create_elements(new_resource, store, 'listaRecursos')
+        with open('store.xml', 'w') as file:
+            store.writexml(file)
+
+        return jsonify({'msg': f'{quantity} recursos creados'}), 200
+    else:
+        return jsonify({"msg": "Método no permitido"}), 405
 
 
 @app.route('/crearCategoria', methods=['POST'])
 def crearCategoria():
-    if not request.json or not 'nombre' in request.json:
-        pass
-    return jsonify({'nombre': request.json['nombre']}), 201
+    if request.method == 'POST':
+        new_category: str = request.data.decode('utf-8')
+        new_category: Element = parseString(new_category)
+        new_category: Element = new_category.getElementsByTagName(
+            'listaCategorias')
+        if new_category is None:
+            return jsonify({'msg': 'La categoría no es válida'}), 400
+
+        new_category: List[Element] = new_category[0].getElementsByTagName(
+            'categoria')
+        quantity: int = create_elements(new_category, store, 'listaCategorias')
+        with open('store.xml', 'w') as file:
+            store.writexml(file)
+
+        return jsonify({'msg': f'{quantity} categorías creadas'}), 200
 
 
 @app.route('/crearConfiguracion', methods=['POST'])
@@ -65,23 +98,74 @@ def crearConfiguracion():
     return jsonify({'msg': 'No se pudo crear la configuración'}), 400
 
 
+@app.route('/createConfig', methods=['POST'])
+def createConfig():
+    if request.method == 'POST':
+        new_config: str = request.data.decode('utf-8')
+        new_config: Element = parseString(new_config)
+        new_config: Element = new_config.getElementsByTagName(
+            'listaConfiguraciones')
+        if new_config is None:
+            return jsonify({'msg': 'La configuración no es válida'}), 400
+
+        new_config: List[Element] = new_config[0].getElementsByTagName(
+            'configuracion')
+        quantity: int = create_elements(
+            new_config, store, 'listaConfig')
+        with open('store.xml', 'w') as file:
+            store.writexml(file)
+
+        return jsonify({'msg': f'{quantity} configuraciones creadas'}), 200
+
+    return jsonify({'msg': 'No se pudo crear la configuración'}), 400
+
+
 @app.route('/crearCliente', methods=['POST'])
 def crearCliente():
-    if not request.json or not 'nombre' in request.json:
-        pass
-    return jsonify({'nombre': request.json['nombre']}), 201
+    if request.method == 'POST':
+        new_client: str = request.data.decode('utf-8')
+        new_client: Element = parseString(new_client)
+        new_client: List[Element] = new_client.getElementsByTagName(
+            'cliente')
+        quantity: int = create_clients(new_client, store)
+        return jsonify({'msg': f'{quantity[0]} clientes creados y {quantity[1]} instancias'}), 200
+
+    return jsonify({'msg': 'No se pudo crear el cliente'}), 400
 
 
 @app.route('/crearInstancia', methods=['POST'])
 def crearInstancia():
-    if not request.json or not 'nombre' in request.json:
-        pass
-    return jsonify({'nombre': request.json['nombre']}), 201
+    if request.method == 'POST':
+        new_instance: str = request.data.decode('utf-8')
+        new_instance: Element = parseString(new_instance)
+        new_instance: List[Element] = new_instance.getElementsByTagName(
+            'instancia')
+        quantity: int = create_elements(new_instance, store, 'listInstances')
+        with open('store.xml', 'w') as file:
+            store.writexml(file)
+
+        return jsonify({'msg': f'{quantity} instancias creadas'}), 200
 
 
-@app.route('/crearConsumos', methods=['PUT'])
+@app.route('/cancelInstance', methods=['POST'])
+def cancelInstance():
+    if request.method == 'POST':
+        if not request.json or not 'id' in request.json:
+            return jsonify({'msg': 'No se pudo cancelar la instancia'}), 400
+
+        id: str = request.json['id']
+        is_canceled: int = cancel_instance(id, store)
+        if is_canceled > 0:
+            return jsonify({'msg': 'Instancia cancelada'}), 200
+        else:
+            return jsonify({'msg': 'No se pudo cancelar la instancia'}), 400
+
+    return jsonify({'msg': 'No se pudo eliminar la instancia'}), 400
+
+
+@app.route('/crearConsumos', methods=['POST'])
 def consumos():
-    if request.method == 'PUT':
+    if request.method == 'POST':
         files = request.files.getlist('')
         if len(files) == 0:
             return jsonify({'msg': 'No se encontraron archivos'}), 400
@@ -91,7 +175,6 @@ def consumos():
             if file and allowed_file(file.filename):
                 information_file: str = file.stream.read().decode('utf-8')
                 config_info: Element = parseString(information_file)
-                store: Element = parse('store.xml')
                 petition_list: List[Element] = config_info.getElementsByTagName(
                     'listadoConsumos')[0].getElementsByTagName('consumo')
                 petitions += create_elements(petition_list,
